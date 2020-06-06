@@ -9,7 +9,8 @@ const {
   count,
   insert,
   update,
-  deleteOne
+  deleteOne,
+  deleteMany
 } = require('../client/database')
 
 exports.find = async payload => {
@@ -97,6 +98,30 @@ exports.remove = async payload => {
   }
 
   return { item }
+}
+
+exports.bulkRemove = async payload => {
+    const { collectionName, itemIds } = payload
+  if (!collectionName)
+    throw new BadRequestError('Missing collectionName in request body')
+  if (!itemIds) throw new BadRequestError('Missing itemIds in request body')
+
+  
+  const itemsChanged = await deleteMany(collectionName, itemIds)
+  console.log("itemsChanged", itemsChanged)
+  if (!itemsChanged) {
+    throw new NotFoundError(`Bulk remove entered error.`)
+  }
+
+  return {
+    inserted: 0,
+    updated: 0,
+    skipped: 0,
+    insertedItemIds: [],
+    errors: [],
+    removed: itemsChanged,
+    removedItemIds: []
+  }
 }
 
 exports.count = async payload => {

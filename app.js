@@ -19,6 +19,7 @@ app.post('/data/get', wrapError(items.getItem))
 app.post('/data/insert', wrapError(items.insertItem))
 app.post('/data/update', wrapError(items.updateItem))
 app.post('/data/remove', wrapError(items.removeItem))
+app.post('/data/bulkRemove', wrapError(items.bulkRemoveItems))
 app.post('/data/count', wrapError(items.countItems))
 app.post('/provision', wrapError(provision.provision))
 

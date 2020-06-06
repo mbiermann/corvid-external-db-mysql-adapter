@@ -29,6 +29,19 @@ exports.deleteOne = (table, itemId) =>
     result => result.affectedRows
   )
 
+exports.deleteMany = (table, itemIds) => {
+    let ids = []
+    for (let i of itemIds) {
+        ids.push(connection.escape(i))
+    }
+    let idsList = ids.join(',')
+    query(
+        `DELETE FROM ${table} WHERE _id IN (${idsList})`,
+        itemIds,
+        result => result.affectedRows
+    )
+}
+
 exports.count = (table, clause) =>
   query(
     `SELECT COUNT(*) FROM ${table} ${clause}`,

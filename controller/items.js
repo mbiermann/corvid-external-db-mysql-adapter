@@ -30,6 +30,12 @@ exports.removeItem = async (req, res) => {
   res.json(removeResult)
 }
 
+exports.bulkRemoveItems = async (req, res) => {
+    const removeResult = await Storage.bulkRemove(req.body)
+
+    res.json(removeResult)
+}
+
 exports.countItems = async (req, res) => {
   const countResult = await Storage.count(req.body)
 
