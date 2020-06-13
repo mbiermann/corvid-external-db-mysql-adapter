@@ -27,7 +27,8 @@ exports.errorMiddleware = (err, req, res, next) => {
       res.status(404).send({ message: err.message })
       break
     default:
-      res.status(500).send({ message: err.message })
+      console.log({ message: err.message })
+      res.status(500).send("Server Error. Please see server logs.")
       break
   }
 }

@@ -18,6 +18,11 @@ exports.insertItem = async (req, res) => {
   res.json(insertResult)
 }
 
+exports.insertItems = async (req, res) => {
+    const insertResult = await Storage.bulkInsert(req.body)
+    res.json(insertResult)
+}
+
 exports.updateItem = async (req, res) => {
   const updateResult = await Storage.update(req.body)
 

@@ -8,6 +8,7 @@ const {
   select,
   count,
   insert,
+  insertMany,
   update,
   deleteOne,
   deleteMany
@@ -71,6 +72,31 @@ exports.insert = async payload => {
   return { item: inserted }
 }
 
+exports.bulkInsert = async payload => {
+
+  const { collectionName, items } = payload
+  
+  if (!collectionName)
+    throw new BadRequestError('Missing collectionName in request body')
+  if (!items) throw new BadRequestError('Missing items list in request body')
+
+    for (let i=0; i < items.length; i++) {
+        if (!items[i]._id) items[i]._id = uuid()
+        extractDates(items[i])
+    }
+
+  const inserted = await insertMany(collectionName, items, collectionName)
+  return {
+    inserted: inserted,
+    updated: 0,
+    skipped: 0,
+    insertedItemIds: [],
+    errors: [],
+    removed: 0,
+    removedItemIds: []
+  }
+}
+
 exports.update = async payload => {
   const { collectionName, item } = payload
   if (!collectionName)
@@ -108,7 +134,6 @@ exports.bulkRemove = async payload => {
 
   
   const itemsChanged = await deleteMany(collectionName, itemIds)
-  console.log("itemsChanged", itemsChanged)
   if (!itemsChanged) {
     throw new NotFoundError(`Bulk remove entered error.`)
   }

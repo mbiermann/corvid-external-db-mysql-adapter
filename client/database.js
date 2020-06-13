@@ -1,9 +1,8 @@
 const mysql = require('mysql')
 
-const sqlConfig = JSON.parse(process.env.SQL_CONFIG);
-
-//console.log('Working with sql config: ' + JSON.stringify(sqlConfig))
-const connection = mysql.createConnection(sqlConfig);
+const poolConfig = JSON.parse(process.env.SQL_CONFIG);
+poolConfig.connectionLimit = 50
+let pool  = mysql.createPool(poolConfig);
 
 exports.select = (table, clause = '', sortClause = '', skip = 0, limit = 1) =>
   query(
@@ -12,8 +11,24 @@ exports.select = (table, clause = '', sortClause = '', skip = 0, limit = 1) =>
     identity => identity
   )
 
-exports.insert = (table, item) =>
+const insert = (table, item) =>
   query(`INSERT INTO ${table} SET ?`, item, () => item)
+
+exports.insert = insert
+
+exports.insertMany = (table, items) =>
+    new Promise((resolve, reject) => {
+        let proms = []
+        for (let i of items) {
+            let prom = insert(table, i)
+            proms.push(prom)
+        }
+        Promise.all(proms).then( result => {
+            resolve(items.length)
+        }).catch( error => {
+            reject(error)
+        })
+    })
 
 exports.update = (table, item) =>
   query(
@@ -35,7 +50,7 @@ exports.deleteMany = (table, itemIds) => {
         ids.push(connection.escape(i))
     }
     let idsList = ids.join(',')
-    query(
+    return query(
         `DELETE FROM ${table} WHERE _id IN (${idsList})`,
         itemIds,
         result => result.affectedRows
@@ -51,7 +66,7 @@ exports.count = (table, clause) =>
 
 exports.describeDatabase = () =>
   query('SHOW TABLES', {}, async result => {
-    const tables = result.map(entry => entry[`Tables_in_${sqlConfig.database}`])
+    const tables = result.map(entry => entry[`Tables_in_${poolConfig.database}`])
 
     return Promise.all(
       tables.map(async table => {
@@ -78,7 +93,7 @@ const describeTable = table =>
 
 const query = (query, values, handler) =>
   new Promise((resolve, reject) => {
-    connection.query(query, values, (err, results, fields) => {
+    pool.query(query, values, (err, results, fields) => {
       if (err) {
         console.log(err);
         reject(err)
