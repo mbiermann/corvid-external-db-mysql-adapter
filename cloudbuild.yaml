@@ -2,11 +2,11 @@
 
 steps:
 # Build and Push New Image to Google Container Registry
-- name: "gcr.io/cloud-builders/docker"
+- name: "gcr.io/audit-277219/corvid-external-db-mysql-adapter:latest"
   args: ["build", "-t", "gcr.io/audit-277219/wix-corvid-audit-db-connector:latest", '.']
 
 
-- name: "gcr.io/cloud-builders/docker"
+- name: "gcr.io/audit-277219/corvid-external-db-mysql-adapter:latest"
   args: ["push", "-t", "gcr.io/audit-277219/wix-corvid-audit-db-connector:latest"]
 
 # Extra step to Deploy New Revision to Cloud Run
