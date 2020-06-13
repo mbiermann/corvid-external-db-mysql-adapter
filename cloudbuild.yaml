@@ -1,4 +1,6 @@
 # cloudbuild.yaml
+
+steps:
 # Build and Push New Image to Google Container Registry
 - name: "gcr.io/audit-277219/corvid-external-db-mysql-adapter:latest"
   args: ["--cache=true", "--cache-ttl=48h", "--destination=gcr.io/audit-277219/wix-corvid-audit-db-connector:latest"]
