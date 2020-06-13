@@ -32,14 +32,14 @@ exports.insertMany = (table, items) =>
 
 exports.update = (table, item) =>
   query(
-    `UPDATE ${table} SET ? WHERE _id = ${connection.escape(item._id)}`,
+    `UPDATE ${table} SET ? WHERE _id = ${pool.escape(item._id)}`,
     item,
     () => item
   )
 
 exports.deleteOne = (table, itemId) =>
   query(
-    `DELETE FROM ${table} WHERE _id = ${connection.escape(itemId)}`,
+    `DELETE FROM ${table} WHERE _id = ${pool.escape(itemId)}`,
     {},
     result => result.affectedRows
   )
@@ -47,7 +47,7 @@ exports.deleteOne = (table, itemId) =>
 exports.deleteMany = (table, itemIds) => {
     let ids = []
     for (let i of itemIds) {
-        ids.push(connection.escape(i))
+        ids.push(pool.escape(i))
     }
     let idsList = ids.join(',')
     return query(
