@@ -8,7 +8,7 @@
     "test": "./node_modules/.bin/mocha './{,!(node_modules)/**}/*.spec.js' --reporter spec",
     "test-watch": "./node_modules/.bin/mocha './{,!(node_modules)/**}/*.spec.js' --reporter min --watch",
     "deploy": "gcloud app deploy ./app.yaml",
-    "dev": "NODE_ENV=development nodemon --watch . index.js"
+    "dev": "NODE_ENV=development nodemon --watch . app.js"
   },
   "keywords": [
     "mysql"
